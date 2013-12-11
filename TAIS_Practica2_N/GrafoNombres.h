@@ -32,59 +32,45 @@ public:
 		string linea;
 		string *pelicula;
 		string p;
-		int tam_grafo=0;
-		int num_actores;
-
-		int indice=0;
-		int indice_aux=0;
-		int indice_peli=0;
+		int tam_grafo=0,num_actores,  indice=0, indice_aux=0 , indice_peli=0;
 
 		std::ifstream file(filename);
 		while(std::getline(file,linea))
 		{
 			pelicula = split(linea,delimiter,num_actores);
-			tam_grafo+=num_actores;
+			for(int i=0; i < num_actores ; i++)
+			{
+				if(!tn.esta(pelicula[i]))
+				{
+					tn.inserta(pelicula[i],indice);
+					indice ++;
+				}
+			}
+			delete []pelicula;
+
 		}
 
-	
-
-		_G = new Grafo(tam_grafo);
-		nombres= new string[tam_grafo]();
-
+		_G = new Grafo(indice);
+		nombres= new string[indice]();
 
 		file.close();
-
 		file.open(filename);
-
 
 		while(std::getline(file,linea))
 		{
 			pelicula = split(linea,delimiter,num_actores);
-			indice_peli = indice;
-			assert(!tn.esta(pelicula[0]));
-			tn.inserta(pelicula[0],indice_peli);
-			p =  pelicula[0];
-			nombres[indice_peli] = p;
-			indice++;
+			indice_peli=tn.consulta(pelicula[0]);
+			nombres[indice_peli] = pelicula[0];
 
 			for(int i=1; i < num_actores ; i++)
 			{
-				if(contiene(pelicula[i]))
-				{
-					indice_aux = tn.consulta(pelicula[i]);
-					assert(nombres[indice_aux]==pelicula[i]);
-					_G->ponArista(indice_peli,indice_aux);
-				}
-				else
-				{
-					tn.inserta(pelicula[i],indice);
-					p = pelicula[i];
-					nombres[indice] = p;
-					_G->ponArista(indice_peli,indice);
-					indice++;
-				}
+				indice_aux=tn.consulta(pelicula[i]);
+				nombres[indice_aux] = pelicula[i];
+				_G->ponArista(indice_aux,indice_peli);
 			}
+			delete []pelicula;
 		}
+
 		std::cout <<  "Se cargaron " << indice << " actores/peliculas" << std::endl ;
 		file.close();
 

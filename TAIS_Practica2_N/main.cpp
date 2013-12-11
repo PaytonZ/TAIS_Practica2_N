@@ -57,6 +57,7 @@ void GradoSeparacion(const string& origen) {
 	if(pelis.contiene(origen))
 	{
 		unsigned int vorigen = pelis.indice(origen);
+		BreadthFirstPaths bfs(pelis.G(),vorigen);
 		string actordestino;
 		std::cout << "Escribe actor destino:" ;
 		std::getline(std::cin,actordestino);
@@ -65,10 +66,9 @@ void GradoSeparacion(const string& origen) {
 			if(pelis.contiene(actordestino))
 			{
 				int vdestino = pelis.indice(actordestino);
-				DepthFirstPaths dfs(pelis.G(),vorigen);
-				if(dfs.hasPathTo(vdestino))
+
+				if(bfs.hasPathTo(vdestino))
 				{
-					BreadthFirstPaths bfs(pelis.G(),vorigen);
 					std::cout << pelis.nombre(vdestino) <<  " tiene un número de Bacon de "<<  bfs.distance(vdestino) / 2 << std::endl;
 					Lista<uint> resultado = bfs.pathTo(vdestino);
 					Lista<uint>::Iterador it = resultado.principio();
@@ -110,7 +110,6 @@ void GradoSeparacion(const string& origen) {
 
 }
 
-
 void NumeroDeBacon(const string& actor)
 {
 	std::cout << "Cargando grafo de peliculas... " << std::endl;
@@ -119,17 +118,15 @@ void NumeroDeBacon(const string& actor)
 	{
 		int vorigen = pelis.indice(actor);
 		BreadthFirstPaths bfs(pelis.G(),vorigen);
-		DepthFirstPaths dfs(pelis.G(),vorigen);
+
 		int v[11];
 		for(int k=0; k < 11; k++)
 			v[k]=0;
 		for(uint i=0; i < pelis.G().V() ; i++)
 		{
-
 			uint bacon = bfs.distance(i);
-			if(bacon % 2 ==0 && dfs.hasPathTo(i))//Son actores y no peliculas.
+			if(bacon % 2 ==0 && bfs.hasPathTo(i))//Son actores y no peliculas.
 			{
-
 				bacon/=2;
 				v[bacon]++;
 			}
